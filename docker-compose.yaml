@@ -1,0 +1,47 @@
+version: '3.7'
+
+x-environment-template: &environment-template
+    REQUIREMENTS_FILE: 'requirements-develop.txt'
+    DEBUG: 'True'
+    ENVIRONMENT: 'local'
+    SECRET_KEY: 'sfkgjhlfgjasdjoOUhfhdPFOUQ3H498'
+    SENTRY_DSN: ''
+    DATABASE_URL: 'postgres://postgres_db_user:postgres_db_passwword@db:5432/postgres_db'
+    CACHE_REDIS_URL: 'redis://127.0.0.1:6380/1'
+    DRAMATIQ_BROKER_REDIS_URL: 'redis://127.0.0.1:6380/2'
+    DRAMATIQ_RESULT_BACKEND_REDIS_URL: 'redis://127.0.0.1:6380/3'
+
+x-server-template: &server-template
+    build:
+        context: ./
+        dockerfile: ./server/Dockerfile
+        args:
+            <<: *environment-template
+    volumes:
+        - ./server:/app/src
+    depends_on:
+        - db
+        - redis
+    environment:
+        <<: *environment-template
+
+services:
+    server:
+        <<: *server-template
+        command: python manage.py runserver 0.0.0.0:8000
+        ports:
+            - 8000:8000
+
+    worker:
+        <<: *server-template
+        command: python manage.py rundramatiq
+
+    db:
+        image: postgres:12.2-alpine
+        environment:
+            POSTGRES_DB: postgres_db
+            POSTGRES_USER: postgres_db_user
+            POSTGRES_PASSWORD: postgres_db_passwword
+
+    redis:
+        image: redis:6.0.3-alpine

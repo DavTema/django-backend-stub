@@ -1,0 +1,13 @@
+*.log
+*.pyc
+.DS_Store
+.idea/*
+.vscode/*
+*.dump
+*.sql
+.__pycache__/*
+
+/server/staticfiles
+/server/media
+
+docker-compose.override.yaml

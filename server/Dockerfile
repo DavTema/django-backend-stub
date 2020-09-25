@@ -1,0 +1,43 @@
+FROM python:3.8-slim
+
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+RUN mkdir -p /app/src && \
+    apt-get update && \
+    apt-get install -y git curl wget
+
+WORKDIR /app/src
+
+ARG REQUIREMENTS_FILE
+ENV REQUIREMENTS_FILE=$REQUIREMENTS_FILE
+
+COPY ./server/requirements.txt ./server/requirements-develop.txt /app/src/
+RUN pip install -r $REQUIREMENTS_FILE
+
+COPY ./server /app/src
+
+ARG DEBUG
+ENV DEBUG=$DEBUG
+
+ARG ENVIRONMENT
+ENV ENVIRONMENT=$ENVIRONMENT
+
+ARG SECRET_KEY
+ENV SECRET_KEY=$SECRET_KEY
+
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+ARG CACHE_REDIS_URL
+ENV CACHE_REDIS_URL=$CACHE_REDIS_URL
+
+ARG DRAMATIQ_BROKER_REDIS_URL
+ENV DRAMATIQ_BROKER_REDIS_URL=$DRAMATIQ_BROKER_REDIS_URL
+
+ARG DRAMATIQ_RESULT_BACKEND_REDIS_URL
+ENV DRAMATIQ_RESULT_BACKEND_REDIS_URL=$DRAMATIQ_RESULT_BACKEND_REDIS_URL
+
+RUN python manage.py collectstatic --noinput
+
+CMD gunicorn config.wsgi --config ./config/gunicorn.py

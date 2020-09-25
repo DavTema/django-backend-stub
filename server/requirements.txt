@@ -1,0 +1,31 @@
+Django==3.1.1
+gunicorn==20.0.4 # wsgi server
+psycopg2-binary==2.8.6 # для работы с postgres
+dj-database-url==0.5.0 # для передачи настроек для базы из env
+
+dramatiq[redis, watch]==1.9.0
+django-dramatiq==0.9.1 # работа с тасками
+periodiq==0.12.1 # планирование тасок для dramatiq
+git+https://github.com/Sovetnikov/django_periodiq.git # запуска dramatiq с периодичными задачами
+
+pytils==0.3 # необходимо для autoslug
+django-autoslug==1.9.8 # автоматический слаг текстовых полей (field для модели)
+
+django-admin-tools==0.9.0 # расширенная панель администратора
+django-json-widget==1.0.1 # виджет для json поля
+django-extended-choices==1.3.3 # удобная работа с choices
+
+redis==3.5.3
+django-redis==4.12.1
+python-redis-lock[django]==3.6.0 # избежание блокировок redis
+
+sentry-sdk==0.17.8 # логирование в sentry
+sentry-dramatiq==0.3.2 # добавление идентификатора задачи dramatiq в контекст ошибки для sentry
+python-json-logger==0.1.11 # логи в формате json
+
+requests==2.24.0 # для http запросов
+
+djangorestframework==3.11.1 # создание rest api
+djangorestframework-jsonapi==3.2.0 # поддержка спецификации json:api в drf
+django-cors-headers==3.5.0 # настройка cors
+django-url-filter==0.3.15 # улучшенные филтры для drf
